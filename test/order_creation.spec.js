@@ -21,7 +21,6 @@ describe('order creation suit', () => {
                         username:"hari",
                         mail:"harishsiva24112002@gmail.com",
                         password:'12345678',
-                        confirm_password_password:'12345678',
                         mobile:123456
                 });
         });

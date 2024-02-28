@@ -1,10 +1,13 @@
 const db=require('../models/index');
+const bcrypt=require('bcrypt');
 
 async function create_user(...userdetail){
     try{
         console.log(userdetail);
-        const[username,mail,password,confirm_password,mobile]=userdetail;
-        const user=await db.sequelize.models.user.create({username,mail,password,confirm_password,mobile});
+        const[username,mail,password,,mobile]=userdetail;
+        const hashedpassword=await bcrypt.hash(password,10);
+        console.log(hashedpassword);
+        const user=await db.sequelize.models.user.create({username,mail,password:hashedpassword,mobile});
         console.log(user.dataValues);
         return user.dataValues;
     }
@@ -16,9 +19,12 @@ async function create_user(...userdetail){
 async function verify_user(...userdetail){
     try{
         const[mail,password]=userdetail;
-        const user=await db.sequelize.models.user.findOne({where:{mail,password}});
+        const user=await db.sequelize.models.user.findOne({where:{mail}});
         if(user){
-            return user.dataValues;
+            if(await bcrypt.compare(password,user.password)){
+                return user.dataValues;
+            }
+            else throw new Error("Password does not match")
         }
         else{
             throw new Error("The user is not valid")

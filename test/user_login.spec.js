@@ -7,18 +7,19 @@ const {verify_user}=require('../operations/user_operations');
 const sinon=require('sinon');
 const jwt=require('jsonwebtoken');
 const proxyquire=require('proxyquire');
-const{user}=require('../models')
+const{user}=require('../models');
+const bcrypt=require('bcrypt');
 
 describe('Testing Login Suit', () => {
   let proxiedLogin;
 
   before(async ()=>{
+    const hashedpassword=await bcrypt.hash('12345678',10);
     await user.create({
       id:1,
       username:"hari",
       mail:"harishsiva24112002@gmail.com",
-      password:'12345678',
-      confirm_password_password:'12345678',
+      password:hashedpassword,
       mobile:123456
     });
   });
@@ -47,7 +48,7 @@ describe('Testing Login Suit', () => {
   })
 
     it('testing proper user',async () => {
-        const user=await verify_user("harishsiva24112002@gmail.com","12345678")
+        const user=await verify_user("harishsiva24112002@gmail.com",'12345678');
         expect(user).exist;
     });
     
@@ -56,7 +57,7 @@ describe('Testing Login Suit', () => {
     });
 
     it("invalid password",async ()=>{
-      await expect(verify_user("harishsiva24112002@gmail.com","h9ugfu9egu9f")).to.be.rejectedWith("The user is not valid")
+      await expect(verify_user("harishsiva24112002@gmail.com","h9ugfu9egu9f")).to.be.rejectedWith("Password does not match")
     })
 
 

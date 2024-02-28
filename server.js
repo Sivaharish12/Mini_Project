@@ -19,7 +19,7 @@ app.use('/',(err,req,res,next)=>{
             res.send(errorMessage);
     }
     res.json({ error: err.message });
-    console.log(err.message);
+    console.log(err);
 });
 
 
