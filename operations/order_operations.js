@@ -2,48 +2,71 @@ const { order, product, user } = require('../models');
 const db=require('../models/index');
 const sequelize=db.sequelize;
 
-async function create_order(product_id,quantity,user_id,id){
-    try{
-        const existedProduct=await product.findByPk(product_id);
-        if(!existedProduct) {
+
+async function create_order(product_id, quantity, user_id, id) {
+    let transaction;
+
+    try {
+
+        transaction = await sequelize.transaction();
+        const existedProduct = await product.findByPk(product_id, { transaction });
+        if (!existedProduct) {
             throw new Error("The Product is not present");
         }
-        if(existedProduct.quantity<quantity){
+
+        if (existedProduct.quantity < quantity) {
             throw new Error("The product quantity is less than the demand quantity");
-        } 
-        const neworder=await order.create({
-            user_id:user_id,
-            product_id:product_id,
-            quantity:quantity,
-            name:existedProduct.name,
-            price:existedProduct.price*quantity
-        });
-        
+        }
+
+        const newOrder = await order.create({
+            user_id: user_id,
+            product_id: product_id,
+            quantity: quantity,
+            name: existedProduct.name,
+            price: existedProduct.price * quantity
+        }, { transaction });
 
         await product.update(
-          {quantity:existedProduct.quantity-quantity},
-          {where:{id:product_id}}
-          );
-        return neworder;
+            { quantity: existedProduct.quantity - quantity },
+            { where: { id: product_id }, transaction }
+        );
+        await transaction.commit();
+        return newOrder;
+    } catch (err) {
+        if (transaction) await transaction.rollback();
+        throw err;
     }
-  catch(err){
-    throw err;
-  }
 }
 
 
+
 async function get_order(user_id){
-    try{
-        const orders=await user.findByPk(user_id,{
-            include:{
-                model:order
-            }
-        })
-        return orders.orders;
+
+    try {                    
+        console.log(user_id);                   //it is used to know about the mixins which are available in the sequqlize
+        const users = await user.findByPk(user_id);
+        if (!users) {
+            throw new Error("The user is not valid");
+        }
+    
+        const orders = await users.getOrders();
+        return orders;
+    } catch (err) {
+            throw err;
     }
-    catch(err){
-        throw new Error("The user is not valid");
-    } 
+    
+    // try{      //But it efficient than the mixins because it uses the joins so it is calling DB only once but in the mmixins it 
+               //// calls the user DB and then it calls the order DB so totally there are two DB calls 
+    //     const orders=await user.findByPk(user_id,{
+    //         include:{
+    //             model:order
+    //         }
+    //     })
+    //     return orders.orders;
+    // }
+    // catch(err){
+    //     throw new Error("The user is not valid");
+    // } 
 }
 
 

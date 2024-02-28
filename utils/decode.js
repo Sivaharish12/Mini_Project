@@ -7,13 +7,13 @@ exports.decode_jwt=(req,res,next)=>{
             next(new Error("please provide token"));
         }
         const access_token=auth_header.split(' ')[1];
-        const decoded_access_token=jwt.decode(access_token);
-        if(decoded_access_token){
-            res.locals.id=decoded_access_token.id;
+        jwt.verify(access_token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+            if (err) {
+                res.locals.id = null;
+                console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$",err);
+                next();
+            }
+            res.locals.id = decoded.id;
             next();
-        }
-        else{
-            res.locals.id=null;
-            next();
-        }
+        });
     }
