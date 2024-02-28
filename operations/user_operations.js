@@ -25,23 +25,18 @@ async function verify_user(...userdetail){
         }
     }
     catch(err){
+        console.log(err);
         throw err
     } 
 }
 
-async function update_user(id,body){
-    try{
-        const user = await db.sequelize.models.user.findOne({ where: { id } });
-        if(user){
-            await Object.assign(user, body);  //the Object.assign will replace the values in the req.body to the existing user object
-            await user.save();  //reflect the changes in the user object in the database
-            return user;
-        }
-        else throw new Error("User is not registered");
-    }
-   catch(err){
-    throw err;
-   }
+async function update_user(id,{username,mail,password,mobile}){
+    const updated_user= await db.sequelize.models.user.update({username,mail,password,mobile}, {
+            where: { id },
+            returning: true,
+        });
+    return updated_user
+
 }
 
 module.exports={create_user,verify_user,update_user};

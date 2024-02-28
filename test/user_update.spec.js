@@ -28,14 +28,13 @@ describe('Testing user Update suit', () => {
 
     it('proper user with updates', async () => {
         const updated_user = await update_user(1, { mail: "priya@gmail.com" });
+        //console.log("%%%%%%%%%%%%%%%%%%%%%%",updated_user);
         await expect(await user.findOne({ where: { mail: "priya@gmail.com", id: 1 } })).to.exist;
         expect(updated_user).to.exist;
-        expect(updated_user.mail).to.be.eq("priya@gmail.com");
+        expect(updated_user[1][0].mail).to.be.eq("priya@gmail.com");
     });
 
-    it('not a valid user', async () => {
-        await expect(update_user(200, { mail: "test@gmail.com" })).to.be.rejectedWith("User is not registered");
-    });
+    //here there is no invalid user tries to update because if the user is validated only he/she can update the fields
 
     it('axios with proper updates', async () => {
            const response= await axios({

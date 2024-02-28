@@ -26,14 +26,9 @@ exports.login=async(req,res,next)=>{
 }
 
 
-exports.update=async(req,res,next)=>{
+exports.update=async(req,res)=>{
     const id=res.locals.id,body=req.body;
-    if(id==res.locals.id){
-        const user=await update_user(id,body);
-        if(user==-1) next(new Error("The user does not exists"))
-        else res.send(user);
-    }
-    else res.status(400).json({error:"User does not have the authorization to modify"})
-    
+    const updated_user=await update_user(id,body);
+    res.send(updated_user[1][0]); 
 }
 
