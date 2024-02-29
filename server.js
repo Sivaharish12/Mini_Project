@@ -3,6 +3,7 @@ const express=require('express');
 const app=express();
 const user_route=require('./routes/users');
 const order_route=require('./routes/orders');
+/*eslint-disable no-unused-vars*/                    //this comment is used to disable the variables unused rule for this file.
 app.use(express.json());
 
 app.use('/user',user_route);
