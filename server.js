@@ -10,7 +10,7 @@ app.use('/order',order_route);
 
 
 
-app.use('/',(err,req,res)=>{
+app.use('/',(err,req,res,next)=>{
     if(err.message=="Validation failed"){
             console.log(err);
             const validationErrorDetails = err.details.get('body') || err.details.get('headers');
