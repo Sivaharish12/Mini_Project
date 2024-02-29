@@ -5,7 +5,7 @@ chai.should();
 const expect = chai.expect;
 const {create_user}=require('../operations/user_operations')
 const axios=require('axios')
-const{order,product,user}=require('../models');
+const{user}=require('../models');
 const bcrypt=require('bcrypt')
 
 describe('Testing Create User Suit', () => {

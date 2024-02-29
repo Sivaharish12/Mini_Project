@@ -3,7 +3,7 @@ const db=require('../models/index');
 const sequelize=db.sequelize;
 
 
-async function create_order(product_id, quantity, user_id, id) {
+async function create_order(product_id, quantity, user_id) {
     let transaction;
 
     try {
@@ -52,6 +52,7 @@ async function get_order(user_id){
         const orders = await users.getOrders();
         return orders;
     } catch (err) {
+        console.log(err);
             throw err;
     }
     
@@ -126,6 +127,7 @@ async function update_order(user_id,product_id,quantity){
 
     }
     catch (err){
+        console.log(err);
         throw err
     }
      
