@@ -16,10 +16,10 @@ app.use('/',(err,req,res,next)=>{
             console.log(err);
             const validationErrorDetails = err.details.get('body') || err.details.get('headers');
             const errorMessage = validationErrorDetails.details[0].message;
-            res.send(errorMessage);
+            res.status(422).send(errorMessage);
     }
-    res.json({ error: err.message });
     console.log(err);
+    res.status(err.status).json({ error: err.message });
 });
 
 

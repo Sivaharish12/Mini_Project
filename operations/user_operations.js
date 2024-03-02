@@ -12,7 +12,9 @@ async function create_user(...userdetail){
         return user.dataValues;
     }
     catch(err){
-        throw new Error("The datatype provided is not valid")
+        const customError = new Error("The datatype provided is not valid");
+        customError.status = 400; 
+        throw customError;
     }
 }
 
@@ -24,10 +26,16 @@ async function verify_user(...userdetail){
             if(await bcrypt.compare(password,user.password)){
                 return user.dataValues;
             }
-            else throw new Error("Password does not match")
+            else{
+                const passwordMismatchError = new Error("Password does not match");
+                passwordMismatchError.status = 401; // Unauthorized
+                throw passwordMismatchError;
+            }
         }
         else{
-            throw new Error("The user is not valid")
+            const userNotFoundError = new Error("The user is not valid");
+            userNotFoundError.status = 404; // Not Found
+            throw userNotFoundError;
         }
     }
     catch(err){

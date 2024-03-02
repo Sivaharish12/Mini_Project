@@ -6,7 +6,7 @@ exports.signup=async (req,res,next)=>{
     try{
         const{username,mail,password,confirm_password,mobile}=req.body;
         const user=await create_user(username,mail,password,confirm_password,mobile);
-        res.send(user);
+        res.status(201).json(user);
     }
     catch(err){
         next(new Error(err));
@@ -21,7 +21,7 @@ exports.login=async(req,res,next)=>{
         const refresh_token=jwt.sign({id:user.id},process.env.REFRESH_TOKEN_SECRET);
         res.json({access_token:access_token,refresh_token:refresh_token});
     }catch(err){
-        next(new Error(err));
+        next(err);
     }
 }
 

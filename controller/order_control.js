@@ -8,9 +8,9 @@ exports.createOrder=async (req,res,next)=>{
     res.send(neworder);
   }
   catch(err){
-    next(new Error(err))
+    next(err)
   }
- 
+  
 }
 
 exports.getorders=async (req,res,next)=>{
@@ -42,7 +42,8 @@ exports.update_orders=async (req,res,next)=>{
 exports.delete_orders=async (req,res,next)=>{
   try{
     const order_id=req.params.id;
-    const deleted_order=await delete_order(order_id);
+    const user_id=res.locals.id;
+    const deleted_order=await delete_order(order_id,user_id);
     res.send(`The order with ${deleted_order} is deleted`)
   }
   catch(err){
